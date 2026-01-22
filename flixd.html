@@ -1108,10 +1108,8 @@
   let holdStartTime = null;
   let holdCard = null;
   let buttonReleased = true;
-  let cardRemovalTime = 0; // Timestamp of when card was removed
   const HOLD_DELAY = 1000; // Time before label appears (ms)
   const HOLD_FILL_DURATION = 2000; // Time for progress bar to fill (ms)
-  const KEYUP_IGNORE_WINDOW = 500; // Ignore keyup events for 500ms after removal
 
   // Utility: Escape HTML to prevent XSS
   function escapeHtml(text) {
@@ -1733,6 +1731,7 @@
       item.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
+          item.dataset.keydownReceived = 'true';
           item.classList.add('pressed');
         } else if (e.key === 'ArrowDown') {
           e.preventDefault();
@@ -1756,11 +1755,11 @@
         if (e.key === 'Enter' || e.key === ' ') {
           item.classList.remove('pressed');
 
-          // Prevent activation if within 500ms of card removal
-          const timeSinceRemoval = Date.now() - cardRemovalTime;
-          if (cardRemovalTime > 0 && timeSinceRemoval < KEYUP_IGNORE_WINDOW) {
+          // Only process if THIS item received keydown
+          if (!item.dataset.keydownReceived) {
             return;
           }
+          delete item.dataset.keydownReceived;
 
           playVideo(item.dataset.id);
         }
@@ -1807,12 +1806,14 @@
       // Keydown - handle hold-to-remove for Up Next items
       card.addEventListener('keydown', (e) => {
         if (document.getElementById('playerView').classList.contains('active')) return;
-        
+
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          
+
           if (!buttonReleased) return;
-          
+
+          // Mark that THIS card received a keydown
+          card.dataset.keydownReceived = 'true';
           card.classList.add('pressed');
           
           const isUpNext = card.dataset.inUpnext === 'true';
@@ -1843,7 +1844,6 @@
                   showToast('Removed from Up Next');
 
                   resetHoldState();
-                  cardRemovalTime = Date.now(); // Prevent keyup activation for next 500ms
 
                   const cards = Array.from(document.querySelectorAll('.video-card'));
                   const currentIndex = cards.indexOf(card);
@@ -1876,12 +1876,13 @@
         if (e.key === 'Enter' || e.key === ' ') {
           card.classList.remove('pressed');
 
-          // Prevent activation if within 500ms of card removal
-          const timeSinceRemoval = Date.now() - cardRemovalTime;
-          if (cardRemovalTime > 0 && timeSinceRemoval < KEYUP_IGNORE_WINDOW) {
-            buttonReleased = true;
+          // ONLY process if THIS card received the keydown
+          if (!card.dataset.keydownReceived) {
             return;
           }
+
+          // Clear the flag
+          delete card.dataset.keydownReceived;
 
           const isUpNext = card.dataset.inUpnext === 'true';
 
@@ -1926,6 +1927,7 @@
       card.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
+          card.dataset.keydownReceived = 'true';
           card.classList.add('pressed');
         }
       });
@@ -1933,11 +1935,11 @@
         if (e.key === 'Enter' || e.key === ' ') {
           card.classList.remove('pressed');
 
-          // Prevent activation if within 500ms of card removal
-          const timeSinceRemoval = Date.now() - cardRemovalTime;
-          if (cardRemovalTime > 0 && timeSinceRemoval < KEYUP_IGNORE_WINDOW) {
+          // Only process if THIS card received keydown
+          if (!card.dataset.keydownReceived) {
             return;
           }
+          delete card.dataset.keydownReceived;
 
           openSeries();
         }

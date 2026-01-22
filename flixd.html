@@ -65,15 +65,11 @@
 
     .video-card {
       position: relative;
-      background: rgba(255, 255, 255, 0.08);
+      background-color: rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(40px);
       -webkit-backdrop-filter: blur(40px);
       border-radius: 16px;
       cursor: pointer;
-      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                  background-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                  border-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                  box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       outline: none;
       border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
@@ -84,6 +80,11 @@
       justify-content: flex-end;
       background-size: cover;
       background-position: center;
+      transform: scale(1);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .video-card.has-thumbnail {
@@ -104,12 +105,13 @@
 
     .video-card:hover,
     .video-card:focus {
-      background-color: rgba(255, 255, 255, 0.15);
       transform: scale(1.08);
+      background-color: rgba(255, 255, 255, 0.15);
       border-color: #5e5ce6;
-      box-shadow: 
+      box-shadow:
         0 0 0 3px rgba(94, 92, 230, 0.5),
-        0 20px 60px rgba(0, 0, 0, 0.4);
+        0 24px 80px rgba(0, 0, 0, 0.5),
+        0 8px 24px rgba(94, 92, 230, 0.3);
     }
 
     .video-card.has-thumbnail:hover,
@@ -148,7 +150,7 @@
       height: 100%;
       background: linear-gradient(90deg, #5e5ce6, #bf5af2);
       border-radius: 4px;
-      transition: width 0.3s ease;
+      transition: width 0.3s ease-out;
     }
 
     .video-card .meta {
@@ -174,25 +176,31 @@
       background: rgba(255, 255, 255, 0.05);
       border-radius: 12px;
       cursor: pointer;
-      transition: transform 0.2s,
-                  background-color 0.2s,
-                  box-shadow 0.2s;
       outline: none;
+      transform: scale(1);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .episode-item:hover,
     .episode-item:focus {
+      transform: scale(1.02);
       background: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     }
 
     .episode-item:focus {
-      box-shadow: inset 0 0 0 3px rgba(94, 92, 230, 0.6);
       background: rgba(94, 92, 230, 0.15);
+      box-shadow:
+        0 0 0 3px rgba(94, 92, 230, 0.4),
+        0 8px 24px rgba(0, 0, 0, 0.15);
     }
 
     .episode-item.pressed {
-      transform: scale(0.98);
+      transform: scale(0.99);
       background: rgba(94, 92, 230, 0.2);
+      transition: transform 0.1s cubic-bezier(0.4, 0, 0.6, 1);
     }
 
     .episode-number {
@@ -261,20 +269,19 @@
       border: 3px solid rgba(255, 255, 255, 0.1);
       border-top-color: #5e5ce6;
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      animation: spin 0.8s linear infinite;
+      z-index: 10;
     }
 
-    .video-card.loading .filename,
-    .video-card.loading .progress-bar,
-    .video-card.loading .meta {
-      opacity: 0.3;
+    .video-card.loading .card-content {
+      visibility: hidden;
     }
 
     /* Hold-to-remove overlay */
     .video-card .hold-overlay {
       position: absolute;
       inset: 0;
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(0, 0, 0, 0.85);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       border-radius: 16px;
@@ -285,7 +292,8 @@
       gap: 16px;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.2s;
+      z-index: 10;
+      transition: opacity 0.15s ease-out;
     }
 
     .video-card .hold-overlay.visible {
@@ -315,29 +323,17 @@
       transition: width 0.05s linear;
     }
 
-    .video-card.holding .filename,
-    .video-card.holding .progress-bar,
-    .video-card.holding .meta {
-      opacity: 0.3;
+    .video-card.holding .card-content {
+      visibility: hidden;
     }
 
     /* Pressed/pushed state - immediate feedback */
     .video-card.pressed {
-      transform: scale(0.96);
-      background: rgba(255, 255, 255, 0.05);
+      transform: scale(0.98);
+      background-color: rgba(255, 255, 255, 0.05);
       border-color: rgba(94, 92, 230, 0.5);
-      box-shadow:
-        0 2px 15px rgba(0, 0, 0, 0.3),
-        inset 0 1px 2px rgba(0, 0, 0, 0.2);
-      transition: transform 0.15s ease-out,
-                  background-color 0.15s ease-out,
-                  border-color 0.15s ease-out,
-                  box-shadow 0.15s ease-out;
-    }
-
-    /* Override hover/focus when pressed */
-    .video-card.pressed:focus {
-      transform: scale(0.96);
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+      transition: transform 0.1s cubic-bezier(0.4, 0, 0.6, 1);
     }
 
     /* Toast */
@@ -356,9 +352,10 @@
       font-weight: 500;
       z-index: 2000;
       opacity: 0;
-      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s;
       border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  opacity 0.3s ease-out;
     }
 
     .toast.visible {
@@ -398,12 +395,19 @@
       font-weight: 500;
       border-radius: 10px;
       color: #fff;
-      transition: background-color 0.2s;
+      transform: scale(1);
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .context-menu-item:hover,
     .context-menu-item:focus {
+      transform: scale(1.03);
       background: rgba(255, 255, 255, 0.1);
+    }
+
+    .context-menu-item:active {
+      transform: scale(0.98);
     }
 
     /* Player View */
@@ -432,7 +436,7 @@
       align-items: center;
       gap: 20px;
       opacity: 1;
-      transition: opacity 0.4s;
+      transition: opacity 0.3s ease-in-out;
     }
 
     .player-header.hidden {
@@ -453,18 +457,28 @@
       padding: 12px 16px;
       line-height: 1;
       border-radius: 12px;
-      transition: background-color 0.2s,
-                  box-shadow 0.2s;
       outline: none;
+      transform: scale(1);
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .back-btn:hover,
     .back-btn:focus {
+      transform: scale(1.1);
       background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     }
 
     .back-btn:focus {
-      box-shadow: 0 0 0 2px rgba(94, 92, 230, 0.5);
+      box-shadow:
+        0 0 0 3px rgba(94, 92, 230, 0.5),
+        0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .back-btn:active {
+      transform: scale(0.95);
     }
 
     .player-title {
@@ -494,7 +508,7 @@
       color: #fff;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.2s;
+      transition: opacity 0.15s ease-out;
     }
 
     .seek-indicator.visible {
@@ -518,7 +532,7 @@
       background: linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.8) 50%, transparent);
       z-index: 10;
       opacity: 1;
-      transition: opacity 0.4s;
+      transition: opacity 0.3s ease-in-out;
     }
 
     .player-controls.hidden {
@@ -537,8 +551,8 @@
       background: rgba(255, 255, 255, 0.2);
       border-radius: 6px;
       position: relative;
-      transition: height 0.15s;
       overflow: hidden;
+      transition: height 0.15s ease-out;
     }
 
     .progress-container:hover .progress-bar-player,
@@ -572,9 +586,9 @@
       border-radius: 50%;
       box-shadow: 0 2px 8px rgba(0,0,0,0.4);
       opacity: 0;
-      transition: opacity 0.15s, transform 0.15s;
       pointer-events: none;
       z-index: 2;
+      transition: opacity 0.15s ease-out, top 0.15s ease-out;
     }
 
     .progress-container:hover .progress-thumb,
@@ -598,8 +612,8 @@
       transform: translateX(-50%);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.15s;
       white-space: nowrap;
+      transition: opacity 0.15s ease-out;
     }
 
     .progress-container:hover .progress-hover-time {
@@ -636,12 +650,13 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      transition: transform 0.2s,
-                  background-color 0.2s,
-                  border-color 0.2s,
-                  box-shadow 0.2s;
       outline: none;
       position: relative;
+      transform: scale(1);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .tv-control-btn svg {
@@ -656,14 +671,23 @@
       position: absolute;
       bottom: 8px;
       white-space: nowrap;
+      transition: color 0.15s ease-out;
     }
 
     /* Focused state - very visible for TV */
     .tv-control-btn:focus {
+      transform: scale(1.15);
       background: rgba(94, 92, 230, 0.4);
       border-color: #5e5ce6;
-      transform: scale(1.15);
-      box-shadow: 0 0 30px rgba(94, 92, 230, 0.5);
+      box-shadow:
+        0 0 0 4px rgba(94, 92, 230, 0.3),
+        0 0 40px rgba(94, 92, 230, 0.6),
+        0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .tv-control-btn:active {
+      transform: scale(0.95);
+      transition: transform 0.1s cubic-bezier(0.4, 0, 0.6, 1);
     }
 
     .tv-control-btn:focus::after {
@@ -685,10 +709,6 @@
 
     .tv-control-btn.play-pause::after {
       bottom: -28px;
-    }
-
-    .tv-control-btn.play-pause:focus {
-      transform: scale(1.2);
     }
 
     /* Play/Pause icon toggle */
@@ -726,12 +746,14 @@
       border: 3px solid rgba(255, 255, 255, 0.1);
       border-top-color: #5e5ce6;
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      animation: spin 0.8s linear infinite;
     }
 
     @keyframes spin {
-      to { transform: rotate(360deg); }
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to { transform: translate(-50%, -50%) rotate(360deg); }
     }
+
 
     .error {
       text-align: center;
@@ -823,24 +845,35 @@
       font-size: 1rem;
       font-weight: 500;
       cursor: pointer;
-      transition: background-color 0.2s,
-                  border-color 0.2s,
-                  color 0.2s,
-                  box-shadow 0.2s;
       font-family: inherit;
+      transform: scale(1);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .season-tab:hover,
     .season-tab:focus {
+      transform: scale(1.05);
       background: rgba(255, 255, 255, 0.15);
       border-color: rgba(255, 255, 255, 0.2);
       color: #fff;
       outline: none;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     }
 
     .season-tab:focus {
-      box-shadow: 0 0 0 3px rgba(94, 92, 230, 0.5);
+      box-shadow:
+        0 0 0 3px rgba(94, 92, 230, 0.5),
+        0 4px 16px rgba(0, 0, 0, 0.15);
       border-color: #5e5ce6;
+    }
+
+    .season-tab:active {
+      transform: scale(0.98);
+      transition: transform 0.1s cubic-bezier(0.4, 0, 0.6, 1);
     }
 
     .season-tab.active {
@@ -936,7 +969,7 @@
 <div class="toast" id="toast"></div>
 
 <div class="context-menu" id="contextMenu">
-  <div class="context-menu-item" tabindex="0" data-action="remove">Remove from Up Next</div>
+  <div class="context-menu-item" tabindex="0" data-action="remove">Remove from Continue Watching</div>
   <div class="context-menu-item" tabindex="0" data-action="markComplete">Mark as Watched</div>
 </div>
 
@@ -1075,6 +1108,7 @@
   let holdStartTime = null;
   let holdCard = null;
   let buttonReleased = true;
+  let blockNextKeyup = false; // Block keyup after card removal
   const HOLD_DELAY = 1000; // Time before label appears (ms)
   const HOLD_FILL_DURATION = 2000; // Time for progress bar to fill (ms)
 
@@ -1376,13 +1410,15 @@
 
   function renderHome(app) {
     // Get continue watching videos (both movies and episodes)
+    // Show any video with progress that's been watched for 2+ seconds and not completed
     const continueWatching = videos
       .filter(v => {
         const progress = getProgress(v.id);
         if (!progress || !progress.duration) return false;
         const percent = progress.position / progress.duration;
         const watchedSeconds = progress.position;
-        return (watchedSeconds > 10 || percent > 0.02) && percent < 0.98;
+        // Show if watched 2+ seconds AND less than 98% complete
+        return watchedSeconds >= 2 && percent < 0.98;
       })
       .sort((a, b) => {
         const pA = getProgress(a.id);
@@ -1393,11 +1429,11 @@
 
     let html = '<h1>FlixD</h1>';
 
-    // Up Next Section
+    // Continue Watching Section
     if (continueWatching.length > 0) {
       html += `
         <div class="section">
-          <div class="section-title">Up Next</div>
+          <div class="section-title">Continue Watching</div>
           <div class="video-grid">
             ${continueWatching.map(v => renderUpNextCard(v)).join('')}
           </div>
@@ -1698,6 +1734,7 @@
       item.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
+          item.dataset.keydownReceived = 'true';
           item.classList.add('pressed');
         } else if (e.key === 'ArrowDown') {
           e.preventDefault();
@@ -1720,6 +1757,19 @@
       item.addEventListener('keyup', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           item.classList.remove('pressed');
+
+          // Block this keyup if we just removed a card
+          if (blockNextKeyup) {
+            blockNextKeyup = false;
+            return;
+          }
+
+          // Only process if THIS item received keydown
+          if (!item.dataset.keydownReceived) {
+            return;
+          }
+          delete item.dataset.keydownReceived;
+
           playVideo(item.dataset.id);
         }
       });
@@ -1762,15 +1812,17 @@
         playVideo(card.dataset.id);
       });
       
-      // Keydown - handle hold-to-remove for Up Next items
+      // Keydown - handle hold-to-remove for Continue Watching items
       card.addEventListener('keydown', (e) => {
         if (document.getElementById('playerView').classList.contains('active')) return;
-        
+
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          
+
           if (!buttonReleased) return;
-          
+
+          // Mark that THIS card received a keydown
+          card.dataset.keydownReceived = 'true';
           card.classList.add('pressed');
           
           const isUpNext = card.dataset.inUpnext === 'true';
@@ -1795,23 +1847,60 @@
                 if (progress >= 1) {
                   clearInterval(holdProgressInterval);
                   holdProgressInterval = null;
-                  
+
                   const videoId = card.dataset.id;
-                  removeFromHistory(videoId);
-                  showToast('Removed from Up Next');
-                  
-                  resetHoldState();
-                  
                   const cards = Array.from(document.querySelectorAll('.video-card'));
                   const currentIndex = cards.indexOf(card);
+
+                  removeFromHistory(videoId);
+                  showToast('Removed from Continue Watching');
+
+                  resetHoldState();
+                  blockNextKeyup = true; // Block the keyup event on focused card
+
+                  // Store which card to focus after keyup
+                  const focusAfterRelease = () => {
+                    render();
+
+                    // Check if there are any "Continue Watching" cards remaining
+                    const upNextCards = Array.from(document.querySelectorAll('.video-card[data-in-upnext="true"]'));
+
+                    if (upNextCards.length > 0) {
+                      // There are still Continue Watching cards, focus the next one
+                      const nextIndex = Math.min(currentIndex, upNextCards.length - 1);
+                      upNextCards[nextIndex].focus();
+                      lastFocusedCardId = upNextCards[nextIndex].dataset.id;
+                    } else {
+                      // No more Continue Watching cards - just focus the first card in the grid
+                      // But do it WITHOUT triggering any activation
+                      const firstCard = document.querySelector('.video-card');
+                      if (firstCard) {
+                        // Don't set lastFocusedCardId - just let focus rest
+                        firstCard.focus();
+                      }
+                    }
+                  };
+
+                  // Wait for keyup before focusing next card
+                  const onKeyUp = (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.stopPropagation(); // Prevent this keyup from reaching any card
+                      e.preventDefault();
+                      document.removeEventListener('keyup', onKeyUp, true);
+                      buttonReleased = true;
+
+                      // Wait a tick to ensure keyup is fully processed
+                      setTimeout(() => {
+                        blockNextKeyup = false; // Clear flag after focus completes
+                        focusAfterRelease();
+                      }, 10);
+                    }
+                  };
+                  // Use capture phase to intercept BEFORE card handler
+                  document.addEventListener('keyup', onKeyUp, true);
+
+                  // Immediately render to show removal, just don't focus yet
                   render();
-                  
-                  const newCards = Array.from(document.querySelectorAll('.video-card'));
-                  if (newCards.length > 0) {
-                    const nextIndex = Math.min(currentIndex, newCards.length - 1);
-                    newCards[nextIndex].focus();
-                    lastFocusedCardId = newCards[nextIndex].dataset.id;
-                  }
                 }
               }, 50);
             }, HOLD_DELAY);
@@ -1829,15 +1918,32 @@
       
       card.addEventListener('keyup', (e) => {
         if (document.getElementById('playerView').classList.contains('active')) return;
-        
+
         if (e.key === 'Enter' || e.key === ' ') {
           card.classList.remove('pressed');
-          
+
+          // Block this keyup if we just removed a card
+          if (blockNextKeyup) {
+            blockNextKeyup = false;
+            buttonReleased = true;
+            return;
+          }
+
+          // ONLY process if THIS card received the keydown
+          if (!card.dataset.keydownReceived) {
+            // Reset buttonReleased to prevent blocking future interactions
+            buttonReleased = true;
+            return;
+          }
+
+          // Clear the flag
+          delete card.dataset.keydownReceived;
+
           const isUpNext = card.dataset.inUpnext === 'true';
-          
+
           if (isUpNext && holdCard === card) {
             const holdElapsed = Date.now() - holdStartTime;
-            
+
             if (holdElapsed < HOLD_DELAY) {
               resetHoldState();
               buttonReleased = true;
@@ -1876,12 +1982,26 @@
       card.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
+          card.dataset.keydownReceived = 'true';
           card.classList.add('pressed');
         }
       });
       card.addEventListener('keyup', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           card.classList.remove('pressed');
+
+          // Block this keyup if we just removed a card
+          if (blockNextKeyup) {
+            blockNextKeyup = false;
+            return;
+          }
+
+          // Only process if THIS card received keydown
+          if (!card.dataset.keydownReceived) {
+            return;
+          }
+          delete card.dataset.keydownReceived;
+
           openSeries();
         }
       });

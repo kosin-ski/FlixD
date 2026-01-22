@@ -1108,6 +1108,7 @@
   let holdStartTime = null;
   let holdCard = null;
   let buttonReleased = true;
+  let justRemovedCard = false; // Prevents keyup activation after card removal
   const HOLD_DELAY = 1000; // Time before label appears (ms)
   const HOLD_FILL_DURATION = 2000; // Time for progress bar to fill (ms)
 
@@ -1753,6 +1754,13 @@
       item.addEventListener('keyup', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           item.classList.remove('pressed');
+
+          // Prevent activation if we just completed a removal
+          if (justRemovedCard) {
+            justRemovedCard = false;
+            return;
+          }
+
           playVideo(item.dataset.id);
         }
       });
@@ -1828,17 +1836,18 @@
                 if (progress >= 1) {
                   clearInterval(holdProgressInterval);
                   holdProgressInterval = null;
-                  
+
                   const videoId = card.dataset.id;
                   removeFromHistory(videoId);
                   showToast('Removed from Up Next');
-                  
+
                   resetHoldState();
-                  
+                  justRemovedCard = true; // Prevent next keyup from activating new card
+
                   const cards = Array.from(document.querySelectorAll('.video-card'));
                   const currentIndex = cards.indexOf(card);
                   render();
-                  
+
                   const newCards = Array.from(document.querySelectorAll('.video-card'));
                   if (newCards.length > 0) {
                     const nextIndex = Math.min(currentIndex, newCards.length - 1);
@@ -1862,15 +1871,22 @@
       
       card.addEventListener('keyup', (e) => {
         if (document.getElementById('playerView').classList.contains('active')) return;
-        
+
         if (e.key === 'Enter' || e.key === ' ') {
           card.classList.remove('pressed');
-          
+
+          // Prevent activation if we just completed a removal
+          if (justRemovedCard) {
+            justRemovedCard = false;
+            buttonReleased = true;
+            return;
+          }
+
           const isUpNext = card.dataset.inUpnext === 'true';
-          
+
           if (isUpNext && holdCard === card) {
             const holdElapsed = Date.now() - holdStartTime;
-            
+
             if (holdElapsed < HOLD_DELAY) {
               resetHoldState();
               buttonReleased = true;
@@ -1915,6 +1931,13 @@
       card.addEventListener('keyup', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           card.classList.remove('pressed');
+
+          // Prevent activation if we just completed a removal
+          if (justRemovedCard) {
+            justRemovedCard = false;
+            return;
+          }
+
           openSeries();
         }
       });

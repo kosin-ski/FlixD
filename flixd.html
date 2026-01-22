@@ -2267,9 +2267,6 @@
   let currentVideo = null;
   let saveInterval = null;
   let headerHideTimeout = null;
-  let playbackStartTime = null; // Track when video actually started playing
-  let totalPlayedTime = 0; // Track cumulative play time
-  let hasCommittedToHistory = false; // Track if video added to watch history
 
   async function playVideo(fileId) {
     const video = videos.find(v => v.id === fileId);
@@ -2320,18 +2317,13 @@
       // Reset play/pause button state
       playPauseBtn.classList.remove('playing');
       
-      // Reset playback tracking
-      playbackStartTime = null;
-      totalPlayedTime = 0;
-      hasCommittedToHistory = false;
-
       // Restore position after metadata loads
       const progress = getProgress(video.id);
       const onLoadedMetadata = () => {
         if (progress && progress.position > 0 && progress.position < videoPlayer.duration) {
           videoPlayer.currentTime = progress.position;
         }
-        // Don't immediately add to watch history - wait for 2 seconds of playback
+        updateProgress(video.id, videoPlayer.currentTime, videoPlayer.duration);
         updateTimeDisplay();
         videoPlayer.removeEventListener('loadedmetadata', onLoadedMetadata);
       };
@@ -2343,31 +2335,14 @@
       try {
         await videoPlayer.play();
         playPauseBtn.classList.add('playing');
-        playbackStartTime = Date.now(); // Start tracking playback time
       } catch (playError) {
         console.warn('Autoplay prevented:', playError);
       }
 
-      // Save progress every 3 seconds (but only after 2 seconds of actual playback)
+      // Save progress every 3 seconds
       saveInterval = setInterval(() => {
         if (!videoPlayer.paused && videoPlayer.duration) {
-          // Accumulate playback time
-          if (playbackStartTime) {
-            const now = Date.now();
-            totalPlayedTime += (now - playbackStartTime) / 1000; // Convert to seconds
-            playbackStartTime = now;
-          }
-
-          // Only add to watch history after 2 seconds of actual playback
-          if (totalPlayedTime >= 2 || hasCommittedToHistory) {
-            if (!hasCommittedToHistory) {
-              hasCommittedToHistory = true;
-            }
-            updateProgress(video.id, videoPlayer.currentTime, videoPlayer.duration);
-          }
-        } else {
-          // Video paused - stop accumulating time
-          playbackStartTime = null;
+          updateProgress(video.id, videoPlayer.currentTime, videoPlayer.duration);
         }
       }, 3000);
 
@@ -2486,8 +2461,8 @@
     const playerView = document.getElementById('playerView');
     const videoPlayer = document.getElementById('videoPlayer');
 
-    // Save final position only if video was played for 2+ seconds
-    if (currentVideo && videoPlayer.duration && hasCommittedToHistory) {
+    // Save final position
+    if (currentVideo && videoPlayer.duration) {
       updateProgress(currentVideo.id, videoPlayer.currentTime, videoPlayer.duration);
     }
 
@@ -2505,11 +2480,6 @@
       clearTimeout(headerHideTimeout);
       headerHideTimeout = null;
     }
-
-    // Reset playback tracking
-    playbackStartTime = null;
-    totalPlayedTime = 0;
-    hasCommittedToHistory = false;
 
     render(); // Re-render to update continue watching
   }
@@ -2580,7 +2550,6 @@
     const btn = document.getElementById('playPauseBtn');
     btn.classList.add('playing');
     btn.dataset.label = 'Pause';
-    playbackStartTime = Date.now(); // Start tracking playback time
   });
 
   videoPlayer.addEventListener('pause', () => {
@@ -2588,13 +2557,6 @@
     btn.classList.remove('playing');
     btn.dataset.label = 'Play';
     showPlayerUI();
-
-    // Accumulate time before stopping
-    if (playbackStartTime) {
-      const now = Date.now();
-      totalPlayedTime += (now - playbackStartTime) / 1000;
-      playbackStartTime = null; // Stop tracking
-    }
   });
 
   videoPlayer.addEventListener('timeupdate', updateTimeDisplay);
@@ -2835,7 +2797,7 @@
 
   // Save progress on video time update (throttled by interval) and when seeking
   document.getElementById('videoPlayer').addEventListener('seeked', () => {
-    if (currentVideo && hasCommittedToHistory) {
+    if (currentVideo) {
       const videoPlayer = document.getElementById('videoPlayer');
       if (videoPlayer.duration) {
         updateProgress(currentVideo.id, videoPlayer.currentTime, videoPlayer.duration);

@@ -1859,21 +1859,39 @@
                   // Store which card to focus after keyup
                   const focusAfterRelease = () => {
                     render();
-                    const newCards = Array.from(document.querySelectorAll('.video-card'));
-                    if (newCards.length > 0) {
-                      const nextIndex = Math.min(currentIndex, newCards.length - 1);
-                      newCards[nextIndex].focus();
-                      lastFocusedCardId = newCards[nextIndex].dataset.id;
+
+                    // Check if there are any "Up Next" cards remaining
+                    const upNextCards = Array.from(document.querySelectorAll('.video-card[data-in-upnext="true"]'));
+
+                    if (upNextCards.length > 0) {
+                      // There are still Up Next cards, focus the next one
+                      const nextIndex = Math.min(currentIndex, upNextCards.length - 1);
+                      upNextCards[nextIndex].focus();
+                      lastFocusedCardId = upNextCards[nextIndex].dataset.id;
+                    } else {
+                      // No more Up Next cards - just focus the first card in the grid
+                      // But do it WITHOUT triggering any activation
+                      const firstCard = document.querySelector('.video-card');
+                      if (firstCard) {
+                        // Don't set lastFocusedCardId - just let focus rest
+                        firstCard.focus();
+                      }
                     }
                   };
 
                   // Wait for keyup before focusing next card
                   const onKeyUp = (e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
+                      e.stopPropagation(); // Prevent this keyup from reaching any card
+                      e.preventDefault();
                       document.removeEventListener('keyup', onKeyUp, true);
                       buttonReleased = true;
-                      focusAfterRelease();
-                      // Keep blockNextKeyup true - it will be cleared by the card's handler
+
+                      // Wait a tick to ensure keyup is fully processed
+                      setTimeout(() => {
+                        blockNextKeyup = false; // Clear flag after focus completes
+                        focusAfterRelease();
+                      }, 10);
                     }
                   };
                   // Use capture phase to intercept BEFORE card handler

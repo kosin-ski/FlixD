@@ -969,7 +969,7 @@
 <div class="toast" id="toast"></div>
 
 <div class="context-menu" id="contextMenu">
-  <div class="context-menu-item" tabindex="0" data-action="remove">Remove from Up Next</div>
+  <div class="context-menu-item" tabindex="0" data-action="remove">Remove from Continue Watching</div>
   <div class="context-menu-item" tabindex="0" data-action="markComplete">Mark as Watched</div>
 </div>
 
@@ -1410,13 +1410,15 @@
 
   function renderHome(app) {
     // Get continue watching videos (both movies and episodes)
+    // Show any video with progress that's been watched for 2+ seconds and not completed
     const continueWatching = videos
       .filter(v => {
         const progress = getProgress(v.id);
         if (!progress || !progress.duration) return false;
         const percent = progress.position / progress.duration;
         const watchedSeconds = progress.position;
-        return (watchedSeconds > 10 || percent > 0.02) && percent < 0.98;
+        // Show if watched 2+ seconds AND less than 98% complete
+        return watchedSeconds >= 2 && percent < 0.98;
       })
       .sort((a, b) => {
         const pA = getProgress(a.id);
@@ -1427,11 +1429,11 @@
 
     let html = '<h1>FlixD</h1>';
 
-    // Up Next Section
+    // Continue Watching Section
     if (continueWatching.length > 0) {
       html += `
         <div class="section">
-          <div class="section-title">Up Next</div>
+          <div class="section-title">Continue Watching</div>
           <div class="video-grid">
             ${continueWatching.map(v => renderUpNextCard(v)).join('')}
           </div>
@@ -1810,7 +1812,7 @@
         playVideo(card.dataset.id);
       });
       
-      // Keydown - handle hold-to-remove for Up Next items
+      // Keydown - handle hold-to-remove for Continue Watching items
       card.addEventListener('keydown', (e) => {
         if (document.getElementById('playerView').classList.contains('active')) return;
 
@@ -1851,7 +1853,7 @@
                   const currentIndex = cards.indexOf(card);
 
                   removeFromHistory(videoId);
-                  showToast('Removed from Up Next');
+                  showToast('Removed from Continue Watching');
 
                   resetHoldState();
                   blockNextKeyup = true; // Block the keyup event on focused card
@@ -1860,16 +1862,16 @@
                   const focusAfterRelease = () => {
                     render();
 
-                    // Check if there are any "Up Next" cards remaining
+                    // Check if there are any "Continue Watching" cards remaining
                     const upNextCards = Array.from(document.querySelectorAll('.video-card[data-in-upnext="true"]'));
 
                     if (upNextCards.length > 0) {
-                      // There are still Up Next cards, focus the next one
+                      // There are still Continue Watching cards, focus the next one
                       const nextIndex = Math.min(currentIndex, upNextCards.length - 1);
                       upNextCards[nextIndex].focus();
                       lastFocusedCardId = upNextCards[nextIndex].dataset.id;
                     } else {
-                      // No more Up Next cards - just focus the first card in the grid
+                      // No more Continue Watching cards - just focus the first card in the grid
                       // But do it WITHOUT triggering any activation
                       const firstCard = document.querySelector('.video-card');
                       if (firstCard) {

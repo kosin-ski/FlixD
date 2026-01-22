@@ -70,7 +70,10 @@
       -webkit-backdrop-filter: blur(40px);
       border-radius: 16px;
       cursor: pointer;
-      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  background-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  border-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  box-shadow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       outline: none;
       border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
@@ -171,7 +174,9 @@
       background: rgba(255, 255, 255, 0.05);
       border-radius: 12px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: transform 0.2s,
+                  background-color 0.2s,
+                  box-shadow 0.2s;
       outline: none;
     }
 
@@ -321,10 +326,13 @@
       transform: scale(0.96);
       background: rgba(255, 255, 255, 0.05);
       border-color: rgba(94, 92, 230, 0.5);
-      box-shadow: 
+      box-shadow:
         0 2px 15px rgba(0, 0, 0, 0.3),
         inset 0 1px 2px rgba(0, 0, 0, 0.2);
-      transition: all 0.15s ease-out;
+      transition: transform 0.15s ease-out,
+                  background-color 0.15s ease-out,
+                  border-color 0.15s ease-out,
+                  box-shadow 0.15s ease-out;
     }
 
     /* Override hover/focus when pressed */
@@ -390,7 +398,7 @@
       font-weight: 500;
       border-radius: 10px;
       color: #fff;
-      transition: background 0.2s;
+      transition: background-color 0.2s;
     }
 
     .context-menu-item:hover,
@@ -445,7 +453,8 @@
       padding: 12px 16px;
       line-height: 1;
       border-radius: 12px;
-      transition: background 0.2s;
+      transition: background-color 0.2s,
+                  box-shadow 0.2s;
       outline: none;
     }
 
@@ -627,7 +636,10 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      transition: all 0.2s;
+      transition: transform 0.2s,
+                  background-color 0.2s,
+                  border-color 0.2s,
+                  box-shadow 0.2s;
       outline: none;
       position: relative;
     }
@@ -811,7 +823,10 @@
       font-size: 1rem;
       font-weight: 500;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: background-color 0.2s,
+                  border-color 0.2s,
+                  color 0.2s,
+                  box-shadow 0.2s;
       font-family: inherit;
     }
 

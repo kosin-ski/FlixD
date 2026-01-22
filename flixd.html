@@ -1878,6 +1878,8 @@
 
           // ONLY process if THIS card received the keydown
           if (!card.dataset.keydownReceived) {
+            // Reset buttonReleased to prevent blocking future interactions
+            buttonReleased = true;
             return;
           }
 

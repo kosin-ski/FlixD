@@ -1840,21 +1840,37 @@
                   holdProgressInterval = null;
 
                   const videoId = card.dataset.id;
+                  const cards = Array.from(document.querySelectorAll('.video-card'));
+                  const currentIndex = cards.indexOf(card);
+
                   removeFromHistory(videoId);
                   showToast('Removed from Up Next');
 
                   resetHoldState();
 
-                  const cards = Array.from(document.querySelectorAll('.video-card'));
-                  const currentIndex = cards.indexOf(card);
-                  render();
+                  // Store which card to focus after keyup
+                  const focusAfterRelease = () => {
+                    render();
+                    const newCards = Array.from(document.querySelectorAll('.video-card'));
+                    if (newCards.length > 0) {
+                      const nextIndex = Math.min(currentIndex, newCards.length - 1);
+                      newCards[nextIndex].focus();
+                      lastFocusedCardId = newCards[nextIndex].dataset.id;
+                    }
+                  };
 
-                  const newCards = Array.from(document.querySelectorAll('.video-card'));
-                  if (newCards.length > 0) {
-                    const nextIndex = Math.min(currentIndex, newCards.length - 1);
-                    newCards[nextIndex].focus();
-                    lastFocusedCardId = newCards[nextIndex].dataset.id;
-                  }
+                  // Wait for keyup before focusing next card
+                  const onKeyUp = (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      document.removeEventListener('keyup', onKeyUp);
+                      buttonReleased = true;
+                      focusAfterRelease();
+                    }
+                  };
+                  document.addEventListener('keyup', onKeyUp);
+
+                  // Immediately render to show removal, just don't focus yet
+                  render();
                 }
               }, 50);
             }, HOLD_DELAY);

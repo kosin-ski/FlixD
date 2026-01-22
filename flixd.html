@@ -101,9 +101,8 @@
     .video-card:hover,
     .video-card:focus {
       background-color: rgba(255, 255, 255, 0.15);
-      transform: scale(1.08);
       border-color: #5e5ce6;
-      box-shadow: 
+      box-shadow:
         0 0 0 3px rgba(94, 92, 230, 0.5),
         0 20px 60px rgba(0, 0, 0, 0.4);
     }
@@ -183,7 +182,6 @@
     }
 
     .episode-item.pressed {
-      transform: scale(0.98);
       background: rgba(94, 92, 230, 0.2);
     }
 
@@ -312,17 +310,11 @@
 
     /* Pressed/pushed state - immediate feedback */
     .video-card.pressed {
-      transform: scale(0.96);
       background: rgba(255, 255, 255, 0.05);
       border-color: rgba(94, 92, 230, 0.5);
       box-shadow:
         0 2px 15px rgba(0, 0, 0, 0.3),
         inset 0 1px 2px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Override hover/focus when pressed */
-    .video-card.pressed:focus {
-      transform: scale(0.96);
     }
 
     /* Toast */
@@ -633,7 +625,6 @@
     .tv-control-btn:focus {
       background: rgba(94, 92, 230, 0.4);
       border-color: #5e5ce6;
-      transform: scale(1.15);
       box-shadow: 0 0 30px rgba(94, 92, 230, 0.5);
     }
 
@@ -656,10 +647,6 @@
 
     .tv-control-btn.play-pause::after {
       bottom: -28px;
-    }
-
-    .tv-control-btn.play-pause:focus {
-      transform: scale(1.2);
     }
 
     /* Play/Pause icon toggle */

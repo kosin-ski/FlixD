@@ -80,9 +80,11 @@
       justify-content: flex-end;
       background-size: cover;
       background-position: center;
-      transition: background-color 0.2s ease-out,
-                  border-color 0.2s ease-out,
-                  box-shadow 0.2s ease-out;
+      transform: scale(1);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .video-card.has-thumbnail {
@@ -103,11 +105,13 @@
 
     .video-card:hover,
     .video-card:focus {
+      transform: scale(1.08);
       background-color: rgba(255, 255, 255, 0.15);
       border-color: #5e5ce6;
       box-shadow:
         0 0 0 3px rgba(94, 92, 230, 0.5),
-        0 20px 60px rgba(0, 0, 0, 0.4);
+        0 24px 80px rgba(0, 0, 0, 0.5),
+        0 8px 24px rgba(94, 92, 230, 0.3);
     }
 
     .video-card.has-thumbnail:hover,
@@ -173,20 +177,30 @@
       border-radius: 12px;
       cursor: pointer;
       outline: none;
-      transition: background-color 0.15s ease-out;
+      transform: scale(1);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .episode-item:hover,
     .episode-item:focus {
+      transform: scale(1.02);
       background: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     }
 
     .episode-item:focus {
       background: rgba(94, 92, 230, 0.15);
+      box-shadow:
+        0 0 0 3px rgba(94, 92, 230, 0.4),
+        0 8px 24px rgba(0, 0, 0, 0.15);
     }
 
     .episode-item.pressed {
+      transform: scale(0.99);
       background: rgba(94, 92, 230, 0.2);
+      transition: transform 0.1s cubic-bezier(0.4, 0, 0.6, 1);
     }
 
     .episode-number {
@@ -255,13 +269,12 @@
       border: 3px solid rgba(255, 255, 255, 0.1);
       border-top-color: #5e5ce6;
       border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      z-index: 10;
     }
 
-    .video-card.loading .filename,
-    .video-card.loading .progress-bar,
-    .video-card.loading .meta {
-      opacity: 0.3;
-      transition: opacity 0.2s ease-out;
+    .video-card.loading .card-content {
+      visibility: hidden;
     }
 
     /* Hold-to-remove overlay */
@@ -318,9 +331,11 @@
 
     /* Pressed/pushed state - immediate feedback */
     .video-card.pressed {
+      transform: scale(0.98);
       background-color: rgba(255, 255, 255, 0.05);
       border-color: rgba(94, 92, 230, 0.5);
       box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+      transition: transform 0.1s cubic-bezier(0.4, 0, 0.6, 1);
     }
 
     /* Toast */
@@ -382,12 +397,19 @@
       font-weight: 500;
       border-radius: 10px;
       color: #fff;
-      transition: background-color 0.15s ease-out;
+      transform: scale(1);
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .context-menu-item:hover,
     .context-menu-item:focus {
+      transform: scale(1.03);
       background: rgba(255, 255, 255, 0.1);
+    }
+
+    .context-menu-item:active {
+      transform: scale(0.98);
     }
 
     /* Player View */
@@ -438,17 +460,27 @@
       line-height: 1;
       border-radius: 12px;
       outline: none;
-      transition: background-color 0.15s ease-out,
-                  box-shadow 0.15s ease-out;
+      transform: scale(1);
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .back-btn:hover,
     .back-btn:focus {
+      transform: scale(1.1);
       background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     }
 
     .back-btn:focus {
-      box-shadow: 0 0 0 2px rgba(94, 92, 230, 0.5);
+      box-shadow:
+        0 0 0 3px rgba(94, 92, 230, 0.5),
+        0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .back-btn:active {
+      transform: scale(0.95);
     }
 
     .player-title {
@@ -622,9 +654,11 @@
       gap: 6px;
       outline: none;
       position: relative;
-      transition: background-color 0.15s ease-out,
-                  border-color 0.15s ease-out,
-                  box-shadow 0.15s ease-out;
+      transform: scale(1);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .tv-control-btn svg {
@@ -644,9 +678,18 @@
 
     /* Focused state - very visible for TV */
     .tv-control-btn:focus {
+      transform: scale(1.15);
       background: rgba(94, 92, 230, 0.4);
       border-color: #5e5ce6;
-      box-shadow: 0 0 30px rgba(94, 92, 230, 0.5);
+      box-shadow:
+        0 0 0 4px rgba(94, 92, 230, 0.3),
+        0 0 40px rgba(94, 92, 230, 0.6),
+        0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .tv-control-btn:active {
+      transform: scale(0.95);
+      transition: transform 0.1s cubic-bezier(0.4, 0, 0.6, 1);
     }
 
     .tv-control-btn:focus::after {
@@ -705,6 +748,11 @@
       border: 3px solid rgba(255, 255, 255, 0.1);
       border-top-color: #5e5ce6;
       border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
 
@@ -799,23 +847,34 @@
       font-weight: 500;
       cursor: pointer;
       font-family: inherit;
-      transition: background-color 0.15s ease-out,
-                  border-color 0.15s ease-out,
-                  color 0.15s ease-out,
-                  box-shadow 0.15s ease-out;
+      transform: scale(1);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                  box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .season-tab:hover,
     .season-tab:focus {
+      transform: scale(1.05);
       background: rgba(255, 255, 255, 0.15);
       border-color: rgba(255, 255, 255, 0.2);
       color: #fff;
       outline: none;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     }
 
     .season-tab:focus {
-      box-shadow: 0 0 0 3px rgba(94, 92, 230, 0.5);
+      box-shadow:
+        0 0 0 3px rgba(94, 92, 230, 0.5),
+        0 4px 16px rgba(0, 0, 0, 0.15);
       border-color: #5e5ce6;
+    }
+
+    .season-tab:active {
+      transform: scale(0.98);
+      transition: transform 0.1s cubic-bezier(0.4, 0, 0.6, 1);
     }
 
     .season-tab.active {

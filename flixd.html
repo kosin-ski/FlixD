@@ -1108,6 +1108,7 @@
   let holdStartTime = null;
   let holdCard = null;
   let buttonReleased = true;
+  let blockNextKeyup = false; // Block keyup after card removal
   const HOLD_DELAY = 1000; // Time before label appears (ms)
   const HOLD_FILL_DURATION = 2000; // Time for progress bar to fill (ms)
 
@@ -1755,6 +1756,12 @@
         if (e.key === 'Enter' || e.key === ' ') {
           item.classList.remove('pressed');
 
+          // Block this keyup if we just removed a card
+          if (blockNextKeyup) {
+            blockNextKeyup = false;
+            return;
+          }
+
           // Only process if THIS item received keydown
           if (!item.dataset.keydownReceived) {
             return;
@@ -1847,6 +1854,7 @@
                   showToast('Removed from Up Next');
 
                   resetHoldState();
+                  blockNextKeyup = true; // Block the keyup event on focused card
 
                   // Store which card to focus after keyup
                   const focusAfterRelease = () => {
@@ -1862,12 +1870,14 @@
                   // Wait for keyup before focusing next card
                   const onKeyUp = (e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
-                      document.removeEventListener('keyup', onKeyUp);
+                      document.removeEventListener('keyup', onKeyUp, true);
                       buttonReleased = true;
                       focusAfterRelease();
+                      // Keep blockNextKeyup true - it will be cleared by the card's handler
                     }
                   };
-                  document.addEventListener('keyup', onKeyUp);
+                  // Use capture phase to intercept BEFORE card handler
+                  document.addEventListener('keyup', onKeyUp, true);
 
                   // Immediately render to show removal, just don't focus yet
                   render();
@@ -1891,6 +1901,13 @@
 
         if (e.key === 'Enter' || e.key === ' ') {
           card.classList.remove('pressed');
+
+          // Block this keyup if we just removed a card
+          if (blockNextKeyup) {
+            blockNextKeyup = false;
+            buttonReleased = true;
+            return;
+          }
 
           // ONLY process if THIS card received the keydown
           if (!card.dataset.keydownReceived) {
@@ -1952,6 +1969,12 @@
       card.addEventListener('keyup', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           card.classList.remove('pressed');
+
+          // Block this keyup if we just removed a card
+          if (blockNextKeyup) {
+            blockNextKeyup = false;
+            return;
+          }
 
           // Only process if THIS card received keydown
           if (!card.dataset.keydownReceived) {

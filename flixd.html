@@ -1624,11 +1624,11 @@
     app.innerHTML = html;
 
     // Back button handler
-    document.getElementById('seriesBackBtn').addEventListener('click', goBackToHome);
+    document.getElementById('seriesBackBtn').addEventListener('click', () => history.back());
     document.getElementById('seriesBackBtn').addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        goBackToHome();
+        history.back();
       } else if (e.key === 'ArrowRight') {
         e.preventDefault();
         const firstTab = document.querySelector('.season-tab');
@@ -1975,6 +1975,8 @@
         currentSeries = card.dataset.series;
         currentSeason = null;
         lastFocusedCardId = null;
+        // Push history state for navigation
+        history.pushState({ view: 'series', series: currentSeries }, '');
         render();
       };
 
@@ -2154,7 +2156,7 @@
     // Back navigation from series view
     if ((e.key === 'Escape' || e.key === 'Backspace') && currentView === 'series') {
       e.preventDefault();
-      goBackToHome();
+      history.back();
       return;
     }
 
@@ -2299,6 +2301,9 @@
       playerTitle.textContent = stripExtension(video.name);
       playerView.classList.add('active');
       document.activeElement.blur();
+
+      // Push history state for back navigation
+      history.pushState({ view: 'player', videoId: video.id }, '');
       
       // Check for next episode
       const nextEp = getNextEpisode(video);
@@ -2487,7 +2492,7 @@
   }
 
   // Event Listeners
-  document.getElementById('backBtn').addEventListener('click', closePlayer);
+  document.getElementById('backBtn').addEventListener('click', () => history.back());
 
   // TV Control button handlers
   document.getElementById('playPauseBtn').addEventListener('click', () => {
@@ -2783,15 +2788,15 @@
         case 'Backspace':
           e.preventDefault();
           e.stopPropagation();
-          closePlayer();
+          history.back();
           return;
       }
-      
+
       // Android back button
       if (e.keyCode === 4) {
         e.preventDefault();
         e.stopPropagation();
-        closePlayer();
+        history.back();
         return;
       }
     }
@@ -2871,7 +2876,56 @@
     }
   }
 
-  init();
+  // History state management for back button navigation
+  window.addEventListener('popstate', (e) => {
+    const state = e.state;
+    const playerView = document.getElementById('playerView');
+
+    // If player is active, close it and stay on the previous view
+    if (playerView && playerView.classList.contains('active')) {
+      closePlayer();
+      return;
+    }
+
+    // If we have a state, navigate to it
+    if (state && state.view) {
+      if (state.view === 'home') {
+        if (currentView !== 'home') {
+          goBackToHome();
+        }
+        // If already on home and got home state, prevent exit
+        else {
+          history.pushState({ view: 'home' }, '');
+        }
+      } else if (state.view === 'series' && state.series) {
+        if (currentView !== 'series' || currentSeries !== state.series) {
+          currentView = 'series';
+          currentSeries = state.series;
+          currentSeason = null;
+          render();
+        }
+      }
+      return;
+    }
+
+    // If no state and we're not on home, go back to home
+    if (currentView !== 'home') {
+      goBackToHome();
+      return;
+    }
+
+    // If on home view, prevent exiting app by pushing state back
+    history.pushState({ view: 'home' }, '');
+  });
+
+  // Initialize app and set up initial history state
+  init().then(() => {
+    // Set up initial history state to prevent app exit
+    if (!history.state || !history.state.view) {
+      // Replace current state and push a new one so there's always a state to go back to
+      history.replaceState({ view: 'home' }, '');
+    }
+  });
 </script>
 
 </body>
